@@ -39,6 +39,7 @@ yarn-error.log*
 
 # local database
 /prisma/*.db
+!/prisma/deployment-template.db
 /prisma/*.db-journal
 /prisma/*.db-shm
 /prisma/*.db-wal
@@ -55,3 +56,5 @@ yarn-error.log*
 next-env.d.ts
 /output/context-eval/
 /output/demo-backups/
+
+.vercel
