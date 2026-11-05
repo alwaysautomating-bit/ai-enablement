@@ -1,0 +1,5 @@
+id: tool.policy-retrieval
+type: tool
+title: Policy Retrieval
+status: interface-required
+description: Retrieve the applicable policy version, scope, and authority rules.

@@ -1,0 +1,15 @@
+id: capability.high-confidence-change-review
+type: capability
+title: High-Confidence Change Review
+description: Produce evidence-linked findings while suppressing speculative, stale, or unauthorized publication.
+inputs: [base_revision, head_revision, requested_outcome, change_context]
+skills:
+  core: [review-change-high-confidence]
+dependencies:
+  knowledge: [governed-change-refinement, evidence-grounding, recommendation-permission-execution]
+  references: [anthropic-code-quality-plugins]
+  tools: [repository-instruction-discovery, version-control-inspection, change-state-retrieval, targeted-verification, immutable-source-citation, review-publication]
+outputs: [validated_findings, suppressed_candidates, publication_decision]
+guardrails: [separate_confidence_from_severity, reject_pre_existing_issues, revalidate_before_publication, publication_requires_authority]
+evaluations:
+  end_to_end: evaluations/change-quality/end-to-end/high-confidence-change-review.yaml

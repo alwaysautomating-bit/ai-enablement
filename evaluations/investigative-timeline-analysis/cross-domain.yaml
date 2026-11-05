@@ -1,0 +1,45 @@
+name: investigative-timeline-analysis-cross-domain
+skill: analyze-investigative-timeline
+scenarios:
+  - id: fraud-missing-approval
+    input:
+      events:
+        - "A bank-detail change was recorded at 14:02Z."
+        - "A payment was released at 14:17Z."
+      process_rule: "Approved bank-detail changes normally create an approval event."
+      coverage: "Approval logs are complete for the interval."
+    must:
+      - "Identify an expected-event gap."
+      - "Treat the gap as an investigative hypothesis, not proof of fraud."
+      - "Request evidence that could distinguish bypass, logging failure, exception handling, and unauthorized change."
+  - id: data-pipeline-unknown-timezone
+    input:
+      events:
+        - "Source A emitted 2026-09-01 10:00 with no timezone."
+        - "Warehouse B ingested at 2026-09-01T10:04:00Z."
+    must:
+      - "Preserve the original source timestamp."
+      - "Refuse to force a UTC conversion without a supported timezone."
+      - "Avoid claiming a four-minute latency as fact."
+  - id: legal-repeated-account
+    input:
+      events:
+        - "Witness A made statement X."
+        - "Report B quotes Witness A's statement X."
+        - "Expert C relies on Report B."
+    must:
+      - "Trace the common source ancestry."
+      - "Avoid calling the repetitions independent corroboration."
+      - "Preserve attribution and source roles."
+  - id: research-missing-control
+    input:
+      events:
+        - "Treatment measurement recorded."
+        - "Conclusion drafted."
+      expected_method: "The registered method calls for a control measurement before comparison."
+      coverage: "The supplied package may be incomplete."
+    must:
+      - "Identify a possible expected-event gap."
+      - "Qualify the gap because source-package coverage is uncertain."
+      - "Request the control measurement or package manifest."
+

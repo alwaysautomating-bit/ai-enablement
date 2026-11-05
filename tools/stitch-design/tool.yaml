@@ -1,0 +1,47 @@
+id: tool.stitch-design
+type: tool
+title: Stitch Design Interface
+status: implementation-available
+description: Retrieve and generate Stitch screens and manage project design systems through an authenticated connector.
+interface:
+  input:
+    type: object
+    required: [operation]
+    properties:
+      operation:
+        type: string
+        enum:
+          - list_projects
+          - get_project
+          - list_screens
+          - get_screen
+          - download_file
+          - generate_screen
+          - edit_screens
+          - generate_variants
+          - list_design_systems
+          - upload_design_md
+          - create_design_system_from_design_md
+          - create_design_system
+          - update_design_system
+          - apply_design_system
+      project_id: {type: string}
+      screen_ids: {type: array, items: {type: string}}
+      asset_id: {type: string}
+      payload: {type: object}
+  output:
+    type: object
+    description: Operation-specific project, screen, file, generation, or design-system result with stable Stitch resource identifiers.
+guarantees:
+  - authenticated_access
+  - explicit_resource_identifiers
+  - read_before_write
+  - post_write_verification
+implementations:
+  - runtime: codex
+    transport: mcp
+    server: stitch
+    tool_family: mcp__stitch__*
+    implemented: true
+    tested: availability-only
+    approved_for_live_writes: user-authorized-only

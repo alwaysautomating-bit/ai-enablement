@@ -1,0 +1,28 @@
+id: capability.operational-memory
+type: capability
+title: Operational Memory
+description: Reconstruct current operational reality from incomplete, conflicting, and evolving evidence.
+inputs:
+  - evidence_bundle
+  - current_state_question
+skills:
+  core:
+    - reconstruct-current-state
+    - retrieve-historical-knowledge
+dependencies:
+  skill_packs:
+    - context-to-decision
+  knowledge:
+    - operational-state
+    - evidence-grounding
+    - fact-versus-inference
+  tools:
+    - evidence-retrieval
+    - operational-memory-search
+outputs:
+  - current_state_packet
+  - historical_precedent_packet
+guardrails:
+  - preserve_provenance
+  - preserve_uncertainty
+  - do_not_use_latest_wins

@@ -1,0 +1,40 @@
+id: skill-pack.financial-intelligence
+type: skill-pack
+title: Financial Intelligence
+description: Identify and classify family-office behavioral events using a governed family-profile reference model.
+inputs:
+  - family_profile
+  - source_artifacts
+  - prior_behavioral_event_map
+skills:
+  core:
+    - identify-behavioral-event
+    - classify-behavioral-event
+dependencies:
+  skill_packs: []
+  knowledge:
+    - behavioral-liquidity
+    - evidence-grounding
+    - fact-versus-inference
+  references:
+    - family-profile
+    - family-profile-schema
+    - behavioral-event-map-schema
+  tools:
+    - evidence-retrieval
+    - operational-memory-search
+outputs:
+  - candidate_behavioral_events
+  - classified_behavioral_events
+  - behavioral_event_map
+  - unresolved_financial_questions
+guardrails:
+  - preserve_family_specificity
+  - preserve_provenance
+  - preserve_uncertainty
+  - do_not_reduce_behavior_to_transaction_labels
+  - do_not_force_event_classification
+  - planning_output_is_not_execution
+evaluations:
+  atomic: evaluations/financial-intelligence/atomic
+  end_to_end: evaluations/financial-intelligence/end-to-end

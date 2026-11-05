@@ -1,0 +1,20 @@
+id: evaluation.operational-event-reconstruction.vendor-change
+type: evaluation
+title: Vendor Change Reconstruction
+fixture: references/examples/operational-events/vendor-change.md
+capability: operational-event-reconstruction
+expected:
+  - candidate_operational_event
+  - event_type_classification
+guardrails:
+  - communication_is_not_confirmation
+  - human_review_before_confirmation
+semantic_review:
+  rubric: evaluations/rubrics/evidence-grounded-decision.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - evidence_grounding
+      - guardrail_compliance
+      - decision_safety

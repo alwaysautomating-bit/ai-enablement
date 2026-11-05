@@ -1,0 +1,24 @@
+id: tool.semantic-stabilization
+type: tool
+title: Semantic Stabilization
+status: implementation-available
+description: Canonicalize what extracted assertions appear to mean without deciding whether they are true.
+interface:
+  contract: same.stabilization/v1
+  input: Permission-filtered known entities and relationships plus extracted entities and assertions; no source message bodies.
+  output: Entity resolutions, canonical assertions, transformations, flags, comparisons, and uncertainty.
+guarantees:
+  - meaning_not_truth
+  - originals_preserved
+  - persistent_entity_invariant
+  - names_never_merge_alone
+  - direction_preserved
+  - input_order_independent
+implementations:
+  - runtime: same
+    transport: local-process
+    implementation: SAME assertion stabilization
+    implemented: true
+    tested: true
+    approved_for_live_sources: false
+permission_classes: [run_semantic_stabilization]

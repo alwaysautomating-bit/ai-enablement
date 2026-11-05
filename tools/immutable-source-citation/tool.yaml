@@ -1,0 +1,5 @@
+id: tool.immutable-source-citation
+type: tool
+title: Immutable Source Citation
+status: interface-required
+description: Produce evidence links bound to a full immutable revision and precise source range when supported.

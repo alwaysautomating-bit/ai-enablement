@@ -1,0 +1,5 @@
+id: tool.signal-contract-verification
+type: tool
+title: Signal Contract Verification
+status: interface-required
+description: Execute versioned known-answer fixtures, threshold cases, cross-language parity checks, and declared order invariants against live entity-resolution signal implementations.

@@ -1,0 +1,12 @@
+id: evaluation.operational-event-reconstruction.atomic-contracts
+type: evaluation
+title: Operational Event Reconstruction Atomic Contracts
+skills:
+  - detect-operational-event
+  - classify-operational-event-type
+assertions:
+  - communication_is_not_confirmation
+  - provenance_is_preserved
+  - uncertainty_is_preserved
+  - event_transition_is_explicit
+  - approval_is_not_inferred

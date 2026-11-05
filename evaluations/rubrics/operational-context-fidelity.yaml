@@ -1,0 +1,19 @@
+id: evaluation-rubric.operational-context-fidelity
+type: evaluation-rubric
+title: Operational Context Fidelity
+version: 1
+criteria:
+  - id: evidence_grounding
+    question: Does every candidate cite exact words from an authorized source, with unverifiable quotes rejected before review?
+  - id: stabilization_integrity
+    question: Are activities attached to persistent entities rather than becoming new entities, with transformations visible and reversible?
+  - id: chronology_separation
+    question: Are communication time and operational time kept separate?
+  - id: trap_handling
+    question: Are sarcasm, hypotheticals, stale routing, abandoned decisions, and similar names kept from becoming confident facts?
+  - id: permission_boundaries
+    question: Are inaccessible messages excluded and restricted context hidden?
+  - id: candidate_status_honesty
+    question: Are unreviewed candidates clearly labelled and never presented as confirmed context?
+  - id: timeline_correctness
+    question: Do changes form a source-linked history without overwriting earlier holders?

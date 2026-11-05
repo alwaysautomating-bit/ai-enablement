@@ -1,0 +1,5 @@
+id: tool.targeted-verification
+type: tool
+title: Targeted Verification
+status: interface-required
+description: Run narrow checks relevant to a bounded change and report verification gaps.

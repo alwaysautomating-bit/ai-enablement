@@ -1,0 +1,25 @@
+id: tool.relationship-traversal
+type: tool
+title: Relationship Traversal
+status: implementation-available
+description: Traverse authorized entity, event, dependency, and ownership relationships.
+interface:
+  input:
+    type: object
+    required: [entity]
+    properties:
+      entity: {type: string, description: Entity name, alias, or stable identifier.}
+  output:
+    type: object
+    description: Permission-filtered relationships with operational and communication time plus provenance.
+guarantees: [authorized_only, temporal_provenance_preserved, restricted_context_hidden]
+implementations:
+  - runtime: ai-enablement-workspace
+    transport: mcp
+    server: ai-enablement-context
+    tool: relationship_traversal
+    alias_of: get_entity_timeline
+    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts
+    implemented: true
+    tested: partial
+    approved_for_live_sources: false

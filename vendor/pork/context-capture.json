@@ -1,0 +1,174 @@
+{
+  "capability": {
+    "id": "skill-pack.context-capture",
+    "type": "skill-pack",
+    "title": "Context Capture",
+    "description": "Reconstruct reviewable operational context from bounded, authorized work conversations and stabilize meaning before durable storage.",
+    "inputs": [
+      "bounded_question",
+      "authorized_source_scope",
+      "permission_filtered_known_context"
+    ],
+    "skills": {
+      "core": [
+        "extract-candidate-operational-context"
+      ],
+      "conditional": [
+        "frame-bounded-capture",
+        "answer-from-reviewed-context"
+      ]
+    },
+    "dependencies": {
+      "skill_packs": [
+        "slack-operational-sensing",
+        "operational-memory"
+      ],
+      "knowledge": [
+        "evidence-grounding",
+        "fact-versus-inference",
+        "operational-state",
+        "semantic-stabilization-boundary",
+        "permission-classes",
+        "recommendation-permission-execution"
+      ],
+      "tools": [
+        "evidence-retrieval",
+        "semantic-stabilization",
+        "bounded-context-capture",
+        "operational-memory-search",
+        "relationship-traversal"
+      ]
+    },
+    "outputs": [
+      "candidate_operational_context",
+      "stabilization_report",
+      "provenance_pointers",
+      "review_queue"
+    ],
+    "guardrails": [
+      "communication_is_not_confirmation",
+      "preserve_provenance",
+      "separate_communication_and_operational_time",
+      "stabilization_is_not_truth",
+      "recommendation_is_not_permission",
+      "respect_authorized_scope"
+    ],
+    "evaluations": {
+      "end_to_end": "evaluations/context-capture/end-to-end"
+    },
+    "governance": {
+      "human_review": "required",
+      "execution_authority": "none",
+      "permission_classes": {
+        "requested": [
+          "retrieve_authorized_evidence",
+          "reconstruct_conversations",
+          "extract_candidate_assertions",
+          "run_semantic_stabilization",
+          "persist_candidates"
+        ],
+        "human_only": [
+          "confirm_operational_facts",
+          "broaden_visibility"
+        ],
+        "not_requested": [
+          "send_email",
+          "post_chat_message",
+          "execute_downstream_action"
+        ]
+      }
+    }
+  },
+  "skills": [
+    {
+      "id": "extract-candidate-operational-context",
+      "kind": "skill",
+      "path": "skills/context-capture/extract-candidate-operational-context/SKILL.md",
+      "content": "---\nname: extract-candidate-operational-context\ndescription: Extract reviewable entities, responsibilities, relationships, decisions, rules, exceptions, and open questions from reconstructed work conversations. Use after authorized evidence has been assembled; outputs remain unreviewed candidates.\nmetadata:\n  domain: context-capture\n  source: AI Enablement Workspace context extractor, promoted 2026-09-29 and migrated to the current PORK ontology 2026-10-20\n---\n\n# Extract Candidate Operational Context\n\nPropose what reconstructed workplace conversations establish about how work operates. A human reviews every item before it is trusted, so exact grounding and honest uncertainty matter more than coverage.\n\n## Read the record\n\n- Read each reconstructed conversation in order and retain missing-context warnings.\n- Treat duplicates as repeated evidence, not independent confirmation.\n- Preserve corrections and superseding assertions rather than deleting earlier states.\n- Do not promote sarcasm, jokes, complaints, hypotheticals, or unanswered questions into facts.\n- Merge aliases or pronouns only when the record supports the identity link.\n\n## Keep times separate\n\nRecord communication time independently from the time an assertion allegedly became operationally true. Preserve the original temporal phrase and classify its basis as `STATED_IN_TEXT`, `INFERRED_FROM_CONTEXT`, `COMMUNICATION_TIME`, or `UNKNOWN`.\n\n## Produce candidates\n\nReturn relevant entities and atomic assertions of type `RELATIONSHIP`, `RESPONSIBILITY`, `DECISION`, `RULE`, `EXCEPTION`, or `OPEN_QUESTION`.\n\nFor every assertion:\n\n- identify subject, predicate, and object where applicable;\n- bind it to speaker, message, thread, and source identifiers;\n- include at least one exact supporting quote;\n- state modality, confidence, operational time, and time basis;\n- link any confirmed fact it may supersede;\n- surface conflict, missing context, and alternative interpretations.\n\nNever invent an entity, date, authority, or fact. These records are quoted assertions and unreviewed candidates, not accepted operational state.\n"
+    },
+    {
+      "id": "frame-bounded-capture",
+      "kind": "skill",
+      "path": "skills/context-capture/frame-bounded-capture/SKILL.md",
+      "content": "---\nname: frame-bounded-capture\ndescription: Frame and start a read-only, permission-bounded capture when someone needs to reconstruct how a process, account, project, or handoff operates from work conversations.\nmetadata:\n  domain: context-capture\n  source: AI Enablement Workspace context-capture workflow, promoted 2026-09-29 and migrated 2026-10-20\n---\n\n# Frame a Bounded Capture\n\nThe consuming runtime holds source connections, enforces permissions, preserves provenance, and controls human review. This skill frames a useful capture; it never decides what is true.\n\n1. Frame one primary operational question in the user's language.\n2. Bound the date window and authorized places. Default to the last 90 days only when the user gives no better boundary.\n3. Start the capture with `bounded-context-capture`.\n4. Report the number of messages read and candidates proposed. Label every proposed item as unreviewed.\n5. Hand the capture to a human reviewer for confirmation, correction, or rejection.\n6. After review, use `answer-from-reviewed-context` for operational answers.\n\nDo not widen visibility, read unauthorized locations, write to source systems, or work around a runtime refusal. If scope is too broad, narrow it.\n"
+    },
+    {
+      "id": "answer-from-reviewed-context",
+      "kind": "skill",
+      "path": "skills/context-capture/answer-from-reviewed-context/SKILL.md",
+      "content": "---\nname: answer-from-reviewed-context\ndescription: Answer questions about responsibilities, decisions, rules, exceptions, and changes using only authorized, human-reviewed operational context with source provenance.\nmetadata:\n  domain: context-capture\n  source: AI Enablement Workspace operational-context workflow, promoted 2026-09-29 and migrated 2026-10-20\n---\n\n# Answer from Reviewed Context\n\nUse only operational context the requester may access and a human has confirmed.\n\n1. Search reviewed operational memory for the names and topic in the question.\n2. For ownership, chronology, or change questions, traverse the relevant entity relationships.\n3. Treat confirmed-but-superseded items as history, not current state.\n4. Keep operational time separate from communication time.\n5. Cite who said what, where, and when; retrieve full evidence when needed.\n6. If confirmed context does not cover the question, say so. Absence of an accessible result is not evidence of absence.\n\nNever present an unreviewed candidate as fact. Keep outside assumptions separate from confirmed context, and do not infer hidden restricted details.\n"
+    }
+  ],
+  "tools": [
+    {
+      "id": "evidence-retrieval",
+      "kind": "tool",
+      "path": "tools/evidence-retrieval/tool.yaml",
+      "content": "id: tool.evidence-retrieval\ntype: tool\ntitle: Evidence Retrieval\nstatus: implementation-available\ndescription: Retrieve authorized source evidence with stable provenance identifiers.\ninterface:\n  input:\n    type: object\n    required: [evidence_id]\n    properties:\n      evidence_id: {type: string}\n  output:\n    type: object\n    description: Authorized evidence content and stable source metadata, or an explicit not-found result.\nguarantees: [authorized_only, stable_provenance_ids, audited_access]\nimplementations:\n  - runtime: ai-enablement-workspace\n    transport: mcp\n    server: ai-enablement-context\n    tool: evidence_retrieval\n    alias_of: get_evidence\n    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts\n    implemented: true\n    tested: partial\n    approved_for_live_sources: false\n"
+    },
+    {
+      "id": "semantic-stabilization",
+      "kind": "tool",
+      "path": "tools/semantic-stabilization/tool.yaml",
+      "content": "id: tool.semantic-stabilization\ntype: tool\ntitle: Semantic Stabilization\nstatus: implementation-available\ndescription: Canonicalize what extracted assertions appear to mean without deciding whether they are true.\ninterface:\n  contract: same.stabilization/v1\n  input: Permission-filtered known entities and relationships plus extracted entities and assertions; no source message bodies.\n  output: Entity resolutions, canonical assertions, transformations, flags, comparisons, and uncertainty.\nguarantees:\n  - meaning_not_truth\n  - originals_preserved\n  - persistent_entity_invariant\n  - names_never_merge_alone\n  - direction_preserved\n  - input_order_independent\nimplementations:\n  - runtime: same\n    transport: local-process\n    implementation: SAME assertion stabilization\n    implemented: true\n    tested: true\n    approved_for_live_sources: false\npermission_classes: [run_semantic_stabilization]\n"
+    },
+    {
+      "id": "bounded-context-capture",
+      "kind": "tool",
+      "path": "tools/bounded-context-capture/tool.yaml",
+      "content": "id: tool.bounded-context-capture\ntype: tool\ntitle: Bounded Context Capture\nstatus: implementation-available\ndescription: Start a bounded, read-only capture over authorized connected sources and return unreviewed candidates for human review.\ninterface:\n  input:\n    type: object\n    required: [question]\n    properties:\n      question: {type: string}\n      window_start: {type: string, format: date}\n      window_end: {type: string, format: date}\n      places: {type: array, description: Runtime-defined scopes selected from the requester's authorized sources.}\n  output:\n    type: object\n    required: [capture_id, status]\n    properties:\n      capture_id: {type: string}\n      status: {const: READY_FOR_REVIEW}\n      proposed: {type: integer}\n      rejected_before_review: {type: integer}\n      messages_read: {type: integer}\nguarantees:\n  - read_only\n  - bounded_authorized_scope\n  - candidates_only\n  - exact_version_approval_for_live_sources\nimplementations:\n  - runtime: ai-enablement-workspace\n    transport: mcp\n    server: ai-enablement-context\n    tool: bounded_context_capture\n    alias_of: start_capture\n    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts\n    implemented: true\n    tested: partial\n    approved_for_live_sources: false\npermission_classes:\n  - retrieve_authorized_evidence\n  - reconstruct_conversations\n  - extract_candidate_assertions\n  - run_semantic_stabilization\n  - persist_candidates\n"
+    },
+    {
+      "id": "operational-memory-search",
+      "kind": "tool",
+      "path": "tools/operational-memory-search/tool.yaml",
+      "content": "id: tool.operational-memory-search\ntype: tool\ntitle: Operational Memory Search\nstatus: implementation-available\ndescription: Search reviewed operational memory and historical cases.\ninterface:\n  input:\n    type: object\n    required: [query]\n    properties:\n      query: {type: string}\n      include_unreviewed: {type: boolean, default: false}\n  output:\n    type: object\n    description: Permission-filtered reviewed context with provenance and explicitly labelled candidates when requested.\nguarantees: [authorized_only, reviewed_only_by_default, candidate_status_visible, provenance_preserved]\nimplementations:\n  - runtime: ai-enablement-workspace\n    transport: mcp\n    server: ai-enablement-context\n    tool: operational_memory_search\n    alias_of: search_context\n    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts\n    implemented: true\n    tested: partial\n    approved_for_live_sources: false\n"
+    },
+    {
+      "id": "relationship-traversal",
+      "kind": "tool",
+      "path": "tools/relationship-traversal/tool.yaml",
+      "content": "id: tool.relationship-traversal\ntype: tool\ntitle: Relationship Traversal\nstatus: implementation-available\ndescription: Traverse authorized entity, event, dependency, and ownership relationships.\ninterface:\n  input:\n    type: object\n    required: [entity]\n    properties:\n      entity: {type: string, description: Entity name, alias, or stable identifier.}\n  output:\n    type: object\n    description: Permission-filtered relationships with operational and communication time plus provenance.\nguarantees: [authorized_only, temporal_provenance_preserved, restricted_context_hidden]\nimplementations:\n  - runtime: ai-enablement-workspace\n    transport: mcp\n    server: ai-enablement-context\n    tool: relationship_traversal\n    alias_of: get_entity_timeline\n    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts\n    implemented: true\n    tested: partial\n    approved_for_live_sources: false\n"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "evidence-grounding",
+      "kind": "knowledge",
+      "path": "knowledge/evidence/evidence-grounding.md",
+      "content": "---\nid: knowledge.evidence-grounding\ntype: knowledge\ntitle: Evidence Grounding\nstatus: canonical-draft\n---\n\n# Evidence Grounding\n\nClaims must remain traceable to the evidence that supports or contradicts them. Source authority, effective time, review state, and corroboration matter more than mere availability or recency.\n\nMissing or conflicting evidence must reduce confidence rather than disappear from the output.\n"
+    },
+    {
+      "id": "fact-versus-inference",
+      "kind": "knowledge",
+      "path": "knowledge/evidence/fact-versus-inference.md",
+      "content": "---\nid: knowledge.fact-versus-inference\ntype: knowledge\ntitle: Fact Versus Inference\nstatus: canonical-draft\n---\n\n# Fact Versus Inference\n\nObserved facts, extracted claims, interpretations, hypotheses, and recommendations are different object types. Agents must label each explicitly and must not promote an inference into fact through confident wording.\n"
+    },
+    {
+      "id": "operational-state",
+      "kind": "knowledge",
+      "path": "knowledge/operational-state/operational-state.md",
+      "content": "---\nid: knowledge.operational-state\ntype: knowledge\ntitle: Operational State\nstatus: canonical-draft\n---\n\n# Operational State\n\nOperational state is the best-supported account of what is true for an entity or workflow at a defined time. It is reconstructed from evidence, authority, chronology, supersession, dependencies, and unresolved conflicts\u2014not from the newest field alone.\n"
+    },
+    {
+      "id": "semantic-stabilization-boundary",
+      "kind": "knowledge",
+      "path": "knowledge/operational-state/semantic-stabilization-boundary.md",
+      "content": "---\nid: knowledge.semantic-stabilization-boundary\ntype: knowledge\ntitle: Semantic Stabilization Boundary\ndescription: Canonicalize what extracted assertions appear to mean without deciding whether they are operationally true.\ntags: [pork, operational-state, identity-resolution, context-capture]\nportable: true\nstatus: canonical-draft\nsource_files:\n  - C:/Projects/AIEnablementWorkspace/src/lib/context/stabilizer.ts\n  - C:/Projects/PORK-context-capture/doctrine/operational-state/semantic-stabilization-boundary.md\n---\n\n# Semantic Stabilization Boundary\n\nExtracted language is unstable. Different models and prompts can describe the same operational claim with different entities, predicates, directions, and dates. Before extracted assertions enter durable operational context, a stabilization layer canonicalizes what they appear to mean:\n\n- entity identity and aliases;\n- persistent entities versus activities, responsibilities, states, and processes attached to them;\n- relationship normalization and direction;\n- temporal and effective-state normalization;\n- ambiguity and conflict signals instead of forced resolution.\n\n## Persistent-entity invariant\n\nA phrase made of a persistent entity plus an activity, responsibility, state, or process does not become another persistent entity. For example, \u201cAcme contract approvals\u201d describes work attached to Acme; it is not a second organization.\n\nTest this invariant across domains rather than against memorized phrases from one corpus.\n\n## Boundary\n\n- Stabilization canonicalizes meaning; it never establishes truth.\n- Evidence validation and human review remain the path to confirmed context.\n- Preserve original values and disclose every transformation.\n- Flag suspected direction reversals instead of silently swapping them.\n- Report ambiguity, conflict, and sequence uncertainty instead of guessing.\n- Results must not depend on input order.\n\nSAME's `same.stabilization/v1` contract is one implementation of this boundary. The concept is independent of that implementation.\n"
+    },
+    {
+      "id": "permission-classes",
+      "kind": "knowledge",
+      "path": "knowledge/governance/permission-classes.md",
+      "content": "---\nid: knowledge.permission-classes\ntype: knowledge\ntitle: Permission Classes and Scoped Approval\ndescription: Scope capability approval to an exact composition version and the specific effects it may perform.\ntags: [pork, governance, permissions, approval]\nportable: true\nstatus: canonical-draft\nsource_files:\n  - C:/Projects/AIEnablementWorkspace/docs/PORK_INTEGRATION_PLAN.md\n  - C:/Projects/PORK-context-capture/doctrine/governance/permission-classes.md\n---\n\n# Permission Classes and Scoped Approval\n\nAn approval is scoped to **capability + version + permission class**. It is never approval of a capability or version in the abstract.\n\nA version is the PORK revision plus the content hash of the assembled capability. A permission class is one kind of effect the capability may have in a consuming runtime. Passing an evaluation for one class says nothing about any other class: permission to retrieve authorized evidence does not authorize extraction, persistence, confirmation, writes, or automation.\n\n## Classes\n\n| Class | Effect | Who may hold it |\n| --- | --- | --- |\n| `retrieve_authorized_evidence` | Read source evidence the requesting person may already see | Capability, after approval |\n| `reconstruct_conversations` | Group, order, and link retrieved messages | Capability, after approval |\n| `extract_candidate_assertions` | Propose candidate operational context from evidence | Capability, after approval |\n| `run_semantic_stabilization` | Send candidates to an authorized stabilization service | Capability, after approval |\n| `persist_candidates` | Store candidates, evidence pointers, and provenance for review | Capability, after approval |\n| `confirm_operational_facts` | Turn a candidate into confirmed operational context | Human reviewer only |\n| `broaden_visibility` | Let more people see something than could see its sources | Human reviewer only |\n| `send_email` | Send or draft outbound email | Separate write approval |\n| `post_chat_message` | Post or edit chat messages | Separate write approval |\n| `execute_downstream_action` | Change an external system or trigger automation | Separate execution approval |\n\n## Rules\n\n1. An approval names the capability, exact revision and content hash, and every granted class. Unnamed classes are denied.\n2. A changed revision or content hash requires a new approval. Dirty content cannot be approved for live use.\n3. An approval may grant only classes exercised by the passing evaluation.\n4. Confirmation and visibility widening remain human-only even when other classes are approved.\n5. Fixture-only evaluations may exercise classes without granting access to live sources.\n6. A runtime that cannot verify every required class for the exact version must fail closed.\n7. Approval and revocation records identify the reviewer as a verifiable principal.\n\nThis extends [Recommendation, Permission, and Execution](recommendation-permission-execution.md): permission to do one thing is not permission to do another.\n"
+    },
+    {
+      "id": "recommendation-permission-execution",
+      "kind": "knowledge",
+      "path": "knowledge/governance/recommendation-permission-execution.md",
+      "content": "---\nid: knowledge.recommendation-permission-execution\ntype: knowledge\ntitle: Recommendation, Permission, and Execution\nstatus: canonical-draft\n---\n\n# Recommendation, Permission, and Execution\n\nA recommendation proposes a next step. Permission establishes whether that step may occur. Execution performs it. These stages require separate evidence, governance, and audit records.\n\nAn agent recommendation is never approval, and approval may still be insufficient for execution when dependencies or policy conditions remain unresolved.\n"
+    }
+  ],
+  "references": [],
+  "content_sha256": "3c6f353973d7005d50fda0e9a1209f965404ed3a9dde1053a072a183dc714f51"
+}

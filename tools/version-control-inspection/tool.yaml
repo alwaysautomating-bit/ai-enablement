@@ -1,0 +1,5 @@
+id: tool.version-control-inspection
+type: tool
+title: Version Control Inspection
+status: interface-required
+description: Inspect diffs, immutable revisions, history, and blame without assuming a specific version-control client.

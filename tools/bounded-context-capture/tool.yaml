@@ -1,0 +1,44 @@
+id: tool.bounded-context-capture
+type: tool
+title: Bounded Context Capture
+status: implementation-available
+description: Start a bounded, read-only capture over authorized connected sources and return unreviewed candidates for human review.
+interface:
+  input:
+    type: object
+    required: [question]
+    properties:
+      question: {type: string}
+      window_start: {type: string, format: date}
+      window_end: {type: string, format: date}
+      places: {type: array, description: Runtime-defined scopes selected from the requester's authorized sources.}
+  output:
+    type: object
+    required: [capture_id, status]
+    properties:
+      capture_id: {type: string}
+      status: {const: READY_FOR_REVIEW}
+      proposed: {type: integer}
+      rejected_before_review: {type: integer}
+      messages_read: {type: integer}
+guarantees:
+  - read_only
+  - bounded_authorized_scope
+  - candidates_only
+  - exact_version_approval_for_live_sources
+implementations:
+  - runtime: ai-enablement-workspace
+    transport: mcp
+    server: ai-enablement-context
+    tool: bounded_context_capture
+    alias_of: start_capture
+    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts
+    implemented: true
+    tested: partial
+    approved_for_live_sources: false
+permission_classes:
+  - retrieve_authorized_evidence
+  - reconstruct_conversations
+  - extract_candidate_assertions
+  - run_semantic_stabilization
+  - persist_candidates

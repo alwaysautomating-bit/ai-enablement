@@ -1,0 +1,15 @@
+id: capability.simplify-recent-code
+type: capability
+title: Simplify Recent Code
+description: Refine a bounded code change for clarity while preserving observable behavior.
+inputs: [operating_mode, target_change, repository_instructions]
+skills:
+  core: [simplify-recent-code]
+dependencies:
+  knowledge: [governed-change-refinement, recommendation-permission-execution]
+  references: [anthropic-code-quality-plugins]
+  tools: [repository-instruction-discovery, version-control-inspection, targeted-verification]
+outputs: [bounded_refinement_result, behavior_invariant_statement, verification_report]
+guardrails: [preserve_observable_behavior, avoid_scope_expansion, prefer_no_change_to_churn]
+evaluations:
+  end_to_end: evaluations/change-quality/end-to-end/simplify-recent-code.yaml

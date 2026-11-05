@@ -1,0 +1,28 @@
+id: skill-pack.slack-operational-sensing
+type: skill-pack
+title: Slack Operational Sensing
+description: Retrieve Slack evidence and detect reviewable operational-event candidates.
+inputs:
+  - slack_scope
+  - operational_question
+skills:
+  core:
+    - detect-operational-event
+dependencies:
+  skill_packs:
+    - operational-event-reconstruction
+  knowledge:
+    - evidence-grounding
+    - operational-state
+  tools:
+    - evidence-retrieval
+outputs:
+  - candidate_operational_events
+  - evidence_packet
+guardrails:
+  - preserve_provenance
+  - respect_authorized_scope
+  - communication_is_not_confirmation
+evaluations:
+  atomic: evaluations/context-to-decision/atomic
+  end_to_end: evaluations/context-to-decision/end-to-end

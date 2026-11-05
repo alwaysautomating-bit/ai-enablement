@@ -1,0 +1,12 @@
+id: evaluation.financial-intelligence.atomic-contracts
+type: evaluation
+title: Financial Intelligence Atomic Contracts
+skills:
+  - identify-behavioral-event
+  - classify-behavioral-event
+assertions:
+  - family_profile_is_consulted
+  - source_evidence_is_preserved
+  - uncertainty_is_explicit
+  - unknown_is_allowed
+  - transaction_labels_do_not_control_classification

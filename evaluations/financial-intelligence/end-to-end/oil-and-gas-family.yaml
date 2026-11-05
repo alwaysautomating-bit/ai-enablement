@@ -1,0 +1,27 @@
+id: evaluation.financial-intelligence.oil-and-gas-family
+type: evaluation
+title: Oil and Gas Family Behavioral Events
+capability: financial-intelligence
+fixture:
+  family_profile:
+    source_of_wealth: oil_and_gas
+    operating_style: asset_operating
+  source_artifacts:
+    - spring ranch equipment cycle
+    - drilling participation window
+    - annual estate review
+expected_event_categories:
+  - oil-and-gas/asset
+  - legal
+guardrails:
+  - do_not_apply_venture_family_assumptions
+  - preserve_family_specificity
+semantic_review:
+  rubric: evaluations/rubrics/financial-intelligence.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - evidence_grounding
+      - family_specificity
+      - guardrail_compliance

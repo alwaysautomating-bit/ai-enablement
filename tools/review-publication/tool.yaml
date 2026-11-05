@@ -1,0 +1,5 @@
+id: tool.review-publication
+type: tool
+title: Review Publication
+status: interface-required
+description: Publish authorized review findings after revision and eligibility revalidation.

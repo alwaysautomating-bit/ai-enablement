@@ -1,0 +1,18 @@
+id: evaluation.context-to-decision.atomic-contracts
+type: evaluation
+title: Context-to-Decision Atomic Contracts
+skills:
+  - classify-operational-event-type
+  - reconstruct-current-state
+  - establish-relative-context
+  - expand-connected-context
+  - explain-change
+  - evaluate-business-impact
+  - retrieve-historical-knowledge
+  - classify-approval-status
+  - recommend-action
+assertions:
+  - output_preserves_provenance
+  - output_exposes_uncertainty
+  - output_matches_declared_contract
+  - boundary_is_not_exceeded

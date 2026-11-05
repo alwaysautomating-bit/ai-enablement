@@ -1,0 +1,529 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Organization {
+  id            String            @id
+  name          String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  users         Membership[]
+  workspaces    Workspace[]
+  auditEvents   AuditEvent[]
+  sourceGrants  SourceGrant[]
+  captures      Capture[]
+  entities      OpEntity[]
+  facts         OperationalFact[]
+  relationships Relationship[]
+}
+
+model User {
+  id              String              @id
+  email           String              @unique
+  name            String
+  createdAt       DateTime            @default(now())
+  memberships     Membership[]
+  runs            Run[]               @relation("RunCreator")
+  approvals       Approval[]
+  auditEvents     AuditEvent[]
+  sourceGrants    SourceGrant[]
+  captures        Capture[]
+  reviewDecisions ReviewDecision[]
+  clientTokens    ClientAccessToken[]
+}
+
+model Membership {
+  id             String       @id @default(cuid())
+  role           String       @default("MEMBER")
+  tierCeiling    String       @default("L0")
+  organizationId String
+  userId         String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+
+  @@unique([organizationId, userId])
+}
+
+model Workspace {
+  id             String       @id
+  name           String
+  tier           String       @default("L0")
+  organizationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  frameworks     Framework[]
+  runs           Run[]
+}
+
+model Framework {
+  id          String             @id
+  name        String
+  workspaceId String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id])
+  versions    FrameworkVersion[]
+}
+
+model FrameworkVersion {
+  id             String    @id @default(cuid())
+  version        Int
+  inputContract  String
+  outputContract String
+  reviewPolicy   String
+  privacyPolicy  String
+  createdAt      DateTime  @default(now())
+  frameworkId    String
+  framework      Framework @relation(fields: [frameworkId], references: [id])
+  runs           Run[]
+
+  @@unique([frameworkId, version])
+}
+
+model Run {
+  id                 String           @id @default(cuid())
+  status             String           @default("DRAFT")
+  question           String
+  audience           String
+  priority           String
+  workspaceId        String
+  frameworkVersionId String
+  createdById        String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  workspace          Workspace        @relation(fields: [workspaceId], references: [id])
+  frameworkVersion   FrameworkVersion @relation(fields: [frameworkVersionId], references: [id])
+  createdBy          User             @relation("RunCreator", fields: [createdById], references: [id])
+  revisions          RunRevision[]
+  sources            RunSource[]
+  approvals          Approval[]
+  auditEvents        AuditEvent[]
+
+  @@index([workspaceId, createdAt])
+  @@index([createdById, createdAt])
+}
+
+model RunRevision {
+  id             String       @id @default(cuid())
+  version        Int
+  kind           String
+  executive      String
+  findings       String
+  flaggedClaim   String
+  recommendation String
+  createdAt      DateTime     @default(now())
+  runId          String
+  run            Run          @relation(fields: [runId], references: [id], onDelete: Cascade)
+  reviewItems    ReviewItem[]
+  approvals      Approval[]
+
+  @@unique([runId, version])
+  @@index([runId, createdAt])
+}
+
+model RunSource {
+  id        String   @id @default(cuid())
+  sourceKey String
+  name      String
+  detail    String
+  quality   String
+  origin    String
+  used      Boolean  @default(true)
+  createdAt DateTime @default(now())
+  runId     String
+  run       Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, sourceKey])
+}
+
+model ReviewItem {
+  id             String      @id @default(cuid())
+  category       String
+  title          String
+  detail         String
+  blocking       Boolean     @default(true)
+  acknowledged   Boolean     @default(false)
+  acknowledgedAt DateTime?
+  createdAt      DateTime    @default(now())
+  revisionId     String
+  revision       RunRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@index([revisionId, acknowledged])
+}
+
+model Approval {
+  id            String      @id @default(cuid())
+  status        String      @default("ACTIVE")
+  approvedAt    DateTime    @default(now())
+  invalidatedAt DateTime?
+  runId         String
+  revisionId    String
+  approverId    String
+  run           Run         @relation(fields: [runId], references: [id], onDelete: Cascade)
+  revision      RunRevision @relation(fields: [revisionId], references: [id])
+  approver      User        @relation(fields: [approverId], references: [id])
+
+  @@index([runId, status])
+}
+
+model AuditEvent {
+  id             String       @id @default(cuid())
+  eventType      String
+  objectType     String
+  objectId       String
+  metadata       String
+  createdAt      DateTime     @default(now())
+  organizationId String
+  runId          String?
+  actorId        String?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  run            Run?         @relation(fields: [runId], references: [id], onDelete: Cascade)
+  actor          User?        @relation(fields: [actorId], references: [id])
+
+  @@index([organizationId, createdAt])
+  @@index([runId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Context Capture (catalog CX-04, CX-05, CX-06)
+//
+// Connection records (SourceGrant, ConnectorCredential) are separate from the
+// context model so live OAuth connectors can be added without changing it.
+// Evidence -> Assertion -> OperationalFact -> Relationship are never collapsed.
+// Every evidence-derived row carries an access envelope (JSON); derived rows
+// inherit the intersection of the envelopes of their inputs.
+//
+// Two chronologies are kept apart:
+// - communicatedAt / firstCommunicatedAt: when something was said in a source.
+// - effectiveFrom / effectiveTo / validFrom / validTo: when it was true in the
+//   operation, with timeBasis recording how that time was established.
+// ---------------------------------------------------------------------------
+
+model SourceGrant {
+  id              String               @id @default(cuid())
+  provider        String
+  accessMode      String               @default("READ")
+  scopes          String
+  accountLabel    String
+  accountIdentity String
+  config          String               @default("{}")
+  status          String               @default("ACTIVE")
+  grantedAt       DateTime             @default(now())
+  revokedAt       DateTime?
+  organizationId  String
+  userId          String
+  organization    Organization         @relation(fields: [organizationId], references: [id])
+  user            User                 @relation(fields: [userId], references: [id])
+  credential      ConnectorCredential?
+  evidence        Evidence[]
+  captureScopes   CaptureScope[]
+
+  @@index([organizationId, userId])
+}
+
+model ConnectorCredential {
+  id                    String      @id @default(cuid())
+  encryptedAccessToken  String?
+  encryptedRefreshToken String?
+  expiresAt             DateTime?
+  keyVersion            Int         @default(1)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  grantId               String      @unique
+  grant                 SourceGrant @relation(fields: [grantId], references: [id], onDelete: Cascade)
+}
+
+model Capture {
+  id               String            @id @default(cuid())
+  question         String
+  status           String            @default("DRAFT")
+  windowStart      DateTime?
+  windowEnd        DateTime?
+  extractorVersion String?
+  extractorModel   String?
+  stats            String            @default("{}")
+  failureReason    String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  organizationId   String
+  createdById      String
+  organization     Organization      @relation(fields: [organizationId], references: [id])
+  createdBy        User              @relation(fields: [createdById], references: [id])
+  scopes           CaptureScope[]
+  evidence         CaptureEvidence[]
+  conversations    Conversation[]
+  assertions       Assertion[]
+
+  @@index([organizationId, createdById, createdAt])
+}
+
+model CaptureScope {
+  id        String      @id @default(cuid())
+  scopeType String
+  value     String
+  label     String
+  captureId String
+  grantId   String
+  capture   Capture     @relation(fields: [captureId], references: [id], onDelete: Cascade)
+  grant     SourceGrant @relation(fields: [grantId], references: [id])
+
+  @@index([captureId])
+}
+
+model Evidence {
+  id                String              @id @default(cuid())
+  provider          String
+  externalId        String
+  threadKey         String
+  container         String
+  authorIdentityKey String
+  authorDisplay     String
+  recipients        String
+  subject           String?
+  communicatedAt    DateTime
+  retrievedAt       DateTime            @default(now())
+  permalink         String?
+  excerpt           String
+  contentHash       String
+  envelope          String
+  sourceAcl         String
+  retainUntil       DateTime?
+  organizationId    String
+  grantId           String
+  grant             SourceGrant         @relation(fields: [grantId], references: [id])
+  captures          CaptureEvidence[]
+  assertions        AssertionEvidence[]
+
+  @@unique([grantId, externalId])
+  @@index([organizationId, communicatedAt])
+}
+
+model Conversation {
+  id           String            @id @default(cuid())
+  label        String
+  basis        String
+  startedAt    DateTime
+  endedAt      DateTime
+  messageCount Int
+  captureId    String
+  capture      Capture           @relation(fields: [captureId], references: [id], onDelete: Cascade)
+  evidence     CaptureEvidence[]
+
+  @@index([captureId])
+}
+
+model CaptureEvidence {
+  captureId             String
+  evidenceId            String
+  conversationId        String?
+  duplicateOfEvidenceId String?
+  referencesEvidenceIds String        @default("[]")
+  cited                 Boolean       @default(false)
+  capture               Capture       @relation(fields: [captureId], references: [id], onDelete: Cascade)
+  evidence              Evidence      @relation(fields: [evidenceId], references: [id])
+  conversation          Conversation? @relation(fields: [conversationId], references: [id])
+
+  @@id([captureId, evidenceId])
+}
+
+model SourceIdentity {
+  id             String    @id @default(cuid())
+  provider       String
+  externalId     String
+  identityKey    String
+  email          String?
+  displayName    String
+  organizationId String
+  entityId       String?
+  entity         OpEntity? @relation(fields: [entityId], references: [id])
+
+  @@unique([organizationId, provider, externalId])
+  @@index([organizationId, identityKey])
+}
+
+model OpEntity {
+  id                 String           @id @default(cuid())
+  entityType         String
+  canonicalName      String
+  status             String           @default("CANDIDATE")
+  mergedIntoId       String?
+  envelope           String
+  createdByCaptureId String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  organizationId     String
+  organization       Organization     @relation(fields: [organizationId], references: [id])
+  aliases            EntityAlias[]
+  identities         SourceIdentity[]
+  subjectOf          Assertion[]      @relation("AssertionSubject")
+  objectOf           Assertion[]      @relation("AssertionObject")
+  outgoing           Relationship[]   @relation("RelationshipFrom")
+  incoming           Relationship[]   @relation("RelationshipTo")
+
+  @@index([organizationId, entityType])
+}
+
+model EntityAlias {
+  id         String   @id @default(cuid())
+  alias      String
+  normalized String
+  basis      String
+  entityId   String
+  entity     OpEntity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  @@unique([entityId, normalized])
+  @@index([normalized])
+}
+
+model Assertion {
+  id                  String              @id @default(cuid())
+  kind                String
+  bucket              String
+  statement           String
+  // Canonical predicate key from SAME stabilization; rawPredicate keeps the extractor's words.
+  predicate           String?
+  predicateLabel      String?
+  rawPredicate        String?
+  // SAME response for this item: transforms, flags, notes, comparisons, uncertainty, versions.
+  stabilization       String              @default("{}")
+  holderCardinality   String?
+  operationalStatus   String
+  modality            String
+  confidence          Float
+  effectiveFrom       DateTime?
+  effectiveTo         DateTime?
+  timeBasis           String
+  timeExpression      String?
+  firstCommunicatedAt DateTime
+  lastCommunicatedAt  DateTime
+  supersedesFactIds   String              @default("[]")
+  rationale           String
+  extractorVersion    String
+  extractorModel      String
+  envelope            String
+  status              String              @default("NEEDS_REVIEW")
+  createdAt           DateTime            @default(now())
+  organizationId      String
+  ownerId             String
+  captureId           String
+  subjectEntityId     String?
+  objectEntityId      String?
+  capture             Capture             @relation(fields: [captureId], references: [id], onDelete: Cascade)
+  subjectEntity       OpEntity?           @relation("AssertionSubject", fields: [subjectEntityId], references: [id])
+  objectEntity        OpEntity?           @relation("AssertionObject", fields: [objectEntityId], references: [id])
+  evidence            AssertionEvidence[]
+  decisions           ReviewDecision[]
+  fact                OperationalFact?
+
+  @@index([captureId, status])
+  @@index([organizationId, status])
+}
+
+model AssertionEvidence {
+  id          String    @id @default(cuid())
+  role        String
+  quote       String
+  quoteStart  Int
+  quoteEnd    Int
+  assertionId String
+  evidenceId  String
+  assertion   Assertion @relation(fields: [assertionId], references: [id], onDelete: Cascade)
+  evidence    Evidence  @relation(fields: [evidenceId], references: [id])
+
+  @@index([assertionId])
+  @@index([evidenceId])
+}
+
+model ReviewDecision {
+  id          String    @id @default(cuid())
+  decision    String
+  correction  String?
+  visibility  String
+  note        String?
+  decidedAt   DateTime  @default(now())
+  assertionId String
+  reviewerId  String
+  assertion   Assertion @relation(fields: [assertionId], references: [id], onDelete: Cascade)
+  reviewer    User      @relation(fields: [reviewerId], references: [id])
+
+  @@index([assertionId])
+}
+
+model OperationalFact {
+  id                  String         @id @default(cuid())
+  kind                String
+  statement           String
+  predicate           String?
+  predicateLabel      String?
+  subjectEntityId     String?
+  objectEntityId      String?
+  effectiveFrom       DateTime?
+  effectiveTo         DateTime?
+  timeBasis           String
+  firstCommunicatedAt DateTime
+  envelope            String
+  sharing             String         @default("OWNER")
+  status              String         @default("ACTIVE")
+  supersededById      String?
+  establishedAt       DateTime       @default(now())
+  organizationId      String
+  ownerId             String
+  establishedById     String
+  assertionId         String         @unique
+  organization        Organization   @relation(fields: [organizationId], references: [id])
+  assertion           Assertion      @relation(fields: [assertionId], references: [id])
+  relationships       Relationship[]
+
+  @@index([organizationId, status])
+}
+
+model Relationship {
+  id                     String          @id @default(cuid())
+  predicate              String
+  predicateLabel         String?
+  holderCardinality      String          @default("MANY")
+  validFrom              DateTime?
+  validTo                DateTime?
+  timeBasis              String
+  firstCommunicatedAt    DateTime
+  closedByRelationshipId String?
+  corroboratingFactIds   String          @default("[]")
+  basis                  String          @default("REVIEWED_ASSERTION")
+  envelope               String
+  sharing                String          @default("OWNER")
+  status                 String          @default("ACTIVE")
+  createdAt              DateTime        @default(now())
+  organizationId         String
+  ownerId                String
+  fromEntityId           String
+  toEntityId             String
+  factId                 String
+  organization           Organization    @relation(fields: [organizationId], references: [id])
+  fromEntity             OpEntity        @relation("RelationshipFrom", fields: [fromEntityId], references: [id])
+  toEntity               OpEntity        @relation("RelationshipTo", fields: [toEntityId], references: [id])
+  fact                   OperationalFact @relation(fields: [factId], references: [id])
+
+  @@index([organizationId, toEntityId, predicate])
+  @@index([organizationId, fromEntityId])
+}
+
+model ClientAccessToken {
+  id             String    @id @default(cuid())
+  name           String
+  tokenHash      String    @unique
+  scopes         String
+  lastUsedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  organizationId String
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}

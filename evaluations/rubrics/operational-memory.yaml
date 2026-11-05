@@ -1,0 +1,17 @@
+id: evaluation-rubric.operational-memory
+type: evaluation-rubric
+title: Operational Memory Quality
+version: 1
+criteria:
+  - id: identity_resolution
+    question: Does the response identify possible duplicates without claiming an unsupported merge?
+  - id: evidence_weighting
+    question: Does the response rank stronger evidence above weaker commentary and expose contradictions?
+  - id: uncertainty_handling
+    question: Are facts, inferences, hypotheses, and unknowns separated without overstating causality?
+  - id: context_reconstruction
+    question: Is the timeline coherent, source-linked, and explicit about gaps?
+  - id: workflow_choice
+    question: Does the response choose a safe next step instead of forcing completion?
+  - id: communication_quality
+    question: Is the review packet clear, provenance-preserving, and appropriately calibrated?

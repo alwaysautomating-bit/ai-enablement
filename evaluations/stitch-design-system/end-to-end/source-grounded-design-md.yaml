@@ -1,0 +1,26 @@
+id: evaluation.stitch-design-system.source-grounded-design-md
+type: evaluation
+title: Source-Grounded DESIGN.md Extraction
+skill: stitch-design-system
+fixture: references/source-material/google-stitch-skills-2026-10-21.md
+expected:
+  - machine_readable_tokens
+  - semantic_design_rationale
+  - source_paths_inspected
+  - conflicts_and_inferences
+  - validation_report
+guardrails:
+  - no_invented_product_content
+  - preserve_existing_identity
+  - distinguish_confirmed_observed_inferred_and_conflict
+  - no_remote_write_without_user_authorization
+  - verify_active_connector_schema
+semantic_review:
+  rubric: evaluations/rubrics/evidence-grounded-decision.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - evidence_grounding
+      - guardrail_compliance
+      - decision_safety

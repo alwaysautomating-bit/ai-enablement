@@ -1,0 +1,21 @@
+id: tool.agent-school
+type: tool
+title: PORK Agent School Cohort Runner
+description: Validate a governed cohort and prepare controlled pre-school, post-school, and adversarial evaluation packets.
+entrypoint: python tools/agent-school/school.py
+commands:
+  - list
+  - validate
+  - prepare
+inputs:
+  - cohort_definition
+  - optional_run_id
+  - optional_output_directory
+outputs:
+  - cohort_run_manifest
+  - phase_run_packets
+boundaries:
+  - does_not_invoke_a_model
+  - does_not_score_semantic_quality
+  - does_not_grant_final_approval
+  - does_not_expose_curriculum_during_pre_school

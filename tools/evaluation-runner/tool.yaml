@@ -1,0 +1,23 @@
+id: tool.evaluation-runner
+type: tool
+title: PORK Evaluation Runner
+description: Discover, validate, prepare, and score PORK evaluation fixtures.
+entrypoint: python tools/evaluation-runner/evaluate.py
+commands:
+  - list
+  - validate
+  - prepare
+  - score
+  - review
+  - inspect
+inputs:
+  - evaluation_id
+  - response_markdown
+outputs:
+  - run_packet
+  - recorded_result
+  - append_only_semantic_review
+boundaries:
+  - does_not_execute_an_agent
+  - does_not_claim_semantic_correctness_from_structure_alone
+  - preserves_human_review_for_judgment_based_rubrics

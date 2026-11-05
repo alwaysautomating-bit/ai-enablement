@@ -1,0 +1,13 @@
+id: evaluation.change-quality.simplify-recent-code
+type: evaluation
+title: Simplify Recent Code End-to-End
+fixture: references/examples/change-quality/cases.md
+capability: simplify-recent-code
+expected: [bounded_refinement_result, behavior_invariant_statement, verification_report]
+guardrails: [preserve_observable_behavior, avoid_scope_expansion, prefer_no_change_to_churn]
+semantic_review:
+  rubric: evaluations/rubrics/evidence-grounded-decision.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria: [evidence_grounding, guardrail_compliance, decision_safety]

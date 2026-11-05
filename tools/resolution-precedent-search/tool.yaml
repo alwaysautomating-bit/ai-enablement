@@ -1,0 +1,5 @@
+id: tool.resolution-precedent-search
+type: tool
+title: Resolution Precedent Search
+status: interface-required
+description: Retrieve authorized, versioned identity-resolution decisions, corrections, reversals, evidence references, and rationales without treating precedent as automatic authority.

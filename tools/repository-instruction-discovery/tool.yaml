@@ -1,0 +1,5 @@
+id: tool.repository-instruction-discovery
+type: tool
+title: Repository Instruction Discovery
+status: interface-required
+description: Resolve repository and directory-specific operating instructions applicable to a target change.

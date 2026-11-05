@@ -1,0 +1,61 @@
+id: evaluation.context-capture.turner-ap
+type: evaluation
+title: Context Capture — Synthetic Cross-Channel AP Corpus
+capability: context-capture
+description: >-
+  Runs Context Capture in a fixture-only AI Enablement Workspace sandbox against a synthetic
+  email and chat corpus containing late announcements, similar names, sarcasm, abandoned
+  hypotheticals, corrections, duplicates, stale routing, missing context, and inaccessible messages.
+fixture:
+  source: same
+  path: fixtures/context-capture/turner-ap/corpus.json
+  sha256: 1eb9455f82bd828425d5ae9463c1c6e9b2f222a43b7ad93ac3021f8711e707cb
+labels:
+  source: same
+  path: fixtures/context-capture/turner-ap/gold.json
+  sha256: cecf4d3b4bd6cee3f4e6b6a259ac74ddf1a24af9cd50e4cdae80ce0784fbe502
+runtime:
+  id: ai-enablement-workspace
+  mode: school-sandbox
+  sources: fixture-only
+exercises_permission_classes:
+  - retrieve_authorized_evidence
+  - reconstruct_conversations
+  - extract_candidate_assertions
+  - run_semantic_stabilization
+  - persist_candidates
+deterministic_checks:
+  - out_of_reach_messages_never_collected
+  - duplicates_recognized
+  - related_threads_reconstructed
+  - every_shown_quote_verified
+  - operational_time_separated_from_message_time
+  - traps_not_promoted
+  - unreviewed_candidates_labelled
+  - every_candidate_decided_by_a_person
+  - changes_form_one_timeline
+  - retrieval_returns_current_holder_with_provenance
+  - restricted_context_hidden
+  - restricted_evidence_not_directly_readable
+expected:
+  - candidate_assertions
+  - stabilization_report
+  - provenance_pointers
+  - operational_time
+  - communication_time
+  - permission_boundaries
+guardrails:
+  - communication_is_not_confirmation
+  - stabilization_is_not_truth
+  - recommendation_is_not_permission
+  - preserve_provenance
+semantic_review:
+  rubric: evaluations/rubrics/operational-context-fidelity.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - evidence_grounding
+      - chronology_separation
+      - permission_boundaries
+      - candidate_status_honesty

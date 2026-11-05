@@ -1,0 +1,29 @@
+id: capability.conflict-resolution
+type: capability
+title: Conflict Resolution
+description: Reconcile conflicting operational sources and recommend the most defensible state under human governance.
+inputs:
+  - conflicting_claims
+  - evidence_bundle
+skills:
+  core:
+    - reconstruct-current-state
+    - explain-change
+    - recommend-action
+dependencies:
+  skill_packs:
+    - context-to-decision
+  knowledge:
+    - evidence-grounding
+    - fact-versus-inference
+    - operational-state
+  tools:
+    - evidence-retrieval
+    - operational-memory-search
+outputs:
+  - conflict_assessment
+  - canonical_state_recommendation
+guardrails:
+  - preserve_provenance
+  - preserve_uncertainty
+  - human_review_before_canonical_change

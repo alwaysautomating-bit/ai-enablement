@@ -1,0 +1,27 @@
+id: evaluation.financial-intelligence.venture-family
+type: evaluation
+title: Venture Family Behavioral Events
+capability: financial-intelligence
+fixture:
+  family_profile:
+    source_of_wealth: venture_capital
+    operating_style: opportunistic
+  source_artifacts:
+    - annual founder conference cluster
+    - recurring SPV funding requests
+    - political fundraising calendar
+expected_event_categories:
+  - business/venture
+  - political
+guardrails:
+  - do_not_invent_reserve_math
+  - preserve_family_specificity
+semantic_review:
+  rubric: evaluations/rubrics/financial-intelligence.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - evidence_grounding
+      - family_specificity
+      - guardrail_compliance

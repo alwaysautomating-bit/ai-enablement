@@ -1,0 +1,58 @@
+Supabase Doctrine / Icarus Casework Database
+
+Yes. We actually have quite a few; they just haven't been consolidated into a single “Supabase rules” document.
+
+The principles we've already established are roughly:
+
+1. **Database changes happen through migrations.** No one-off production schema changes. Changes are versioned, committed, replayable Supabase migrations.
+
+2. **Local → hosted must be reproducible.** Replay/reset migrations locally first. If repository migration history and the actual database disagree, stop rather than building on top of unexplained drift.
+
+3. **Schema parity before data movement.** Which is exactly what just happened: hosted structure matched, permissions didn't, so Casework data stayed local.
+
+4. **Case-scoped isolation through RLS.** Access is constrained by case, and cross-case leakage is specifically something we've tested for.
+
+5. **Narrow privileged operations.** `SECURITY DEFINER` functions/RPCs should be tightly scoped, have controlled settings such as a fixed `search_path`, and exist for a specific operation rather than becoming a generic “do whatever” escape hatch.
+
+6. **Writes are governed operations.** We already had the idea that publication/intake/review operations should happen atomically and preserve audit attribution rather than allowing arbitrary state changes.
+
+7. **No automatic promotion to truth.** Extraction, verification/reconciliation, review, and promotion are distinct. Something being accepted by one process doesn't silently turn it into canonical fact.
+
+8. **Preserve source material before transforming it.** Original/source bytes are immutable; exact-checksum artifacts can be reused; transformations retain lineage back to the source.
+
+9. **Atomic commits.** If an operation requires several related database changes, the complete valid state gets committed together. Otherwise, nothing gets committed. That's the database implementation of **no half states**.
+
+10. **Supabase Casework is authoritative.** Derived projections/downstream stores can exist, but they're scoped/read-only/replaceable and don't get to write their interpretation back into the source of truth.
+
+And today's conversation adds a principle that was already implicit but is now much clearer:
+
+> **Users express intent. The system owns database state.**
+
+Meaning: don't make users—or even the UI—responsible for understanding the web of tables underneath an operation. For governed/interconnected data, the system accepts the requested action, determines the required database shape, validates it, and performs the controlled mutation. If it can't produce a valid state, it blocks the operation.
+
+That one actually ties several existing rules together:
+
+**Permission ≠ readiness** → being technically allowed to write doesn't mean the write should occur.
+
+**No half states** → the system must produce the complete required state.
+
+**Lineage/provenance** → shaping a write includes preserving where it came from.
+
+**Controlled RPCs** → expose operations, rather than exposing your underlying tables as the application's interface.
+
+**RLS/grants** → defense underneath that application layer, rather than expecting the user to navigate database permissions correctly.
+
+Users express intent. The system owns database state.
+
+
+
+Your current “DON'T FUCKING LOSE MY DATA” instruction is basically the natural-language prototype. 😂: 
+No half states.
+
+Permission ≠ readiness.
+
+Authoritative data is never destructively transformed by implication.
+
+Destructive operations require an explicit reason, known blast radius, and recovery path.
+
+

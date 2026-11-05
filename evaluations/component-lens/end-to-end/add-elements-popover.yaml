@@ -1,0 +1,24 @@
+id: evaluation.component-lens.add-elements-popover
+type: evaluation
+title: Evidence-Bounded Add Elements Inventory
+skill: component-lens
+fixture: evaluations/component-lens/fixtures/add-elements-popover.md
+request:
+  mode: developer
+  format: json
+expected:
+  - one_visible_popover_root
+  - exact_visible_labels
+  - inputs_state_expanded
+  - eight_collapsed_section_instances
+  - reusable_accordion_item_pattern
+  - four_visible_input_menu_items
+  - valid_json
+guardrails:
+  - no_hidden_section_contents
+  - no_event_handler_inference
+  - no_framework_or_dom_claim
+  - no_code_generation
+  - no_redesign_commentary
+  - preserve_instances_after_deduplication
+

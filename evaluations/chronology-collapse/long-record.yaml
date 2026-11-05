@@ -1,0 +1,48 @@
+name: chronology-collapse-long-record
+skill: collapse-chronology
+scenarios:
+  - id: superseded-plan-across-distant-segments
+    input:
+      segments:
+        - id: s1
+          text: "The team is considering Vendor C."
+        - id: s38
+          text: "Decision: select Vendor B and protect the October date."
+    must:
+      - "Keep Vendor C as a considered option rather than a decision."
+      - "Represent the Vendor B decision as the later supported state."
+      - "Do not erase the earlier discussion."
+      - "Cite both segment IDs."
+  - id: testimony-question-not-adopted
+    input:
+      segments:
+        - id: tx-10
+          locator: "42:8-12"
+          phase: cross
+          text: "Q: You saw the blue car at 9 p.m., correct? A: No, I did not."
+    must:
+      - "Attribute the proposition in the question to counsel, not the witness."
+      - "Record the witness denial separately."
+      - "Preserve cross-examination context and locator."
+  - id: incomplete-order
+    input:
+      segments:
+        - id: a
+          text: "Event A occurred before noon."
+        - id: b
+          text: "Event B occurred after intake; intake time is absent."
+    must:
+      - "Keep A and B incomparable unless another source connects them."
+      - "Report partial ordering and missing anchor."
+  - id: chunk-boundary-correction
+    input:
+      segments:
+        - id: chunk-1-last
+          text: "The filing date was May 4."
+        - id: chunk-2-first
+          text: "Correction: the filing date was May 14, not May 4."
+    must:
+      - "Preserve both assertions."
+      - "Link the second as a correction or supersession."
+      - "Carry the boundary event between chunks."
+

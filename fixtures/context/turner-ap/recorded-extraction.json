@@ -1,0 +1,339 @@
+{
+  "model": "reference-2026-09-29",
+  "corpusId": "turner-ap-2026",
+  "note": "Hand-authored reference response used to test the pipeline offline. It is not evidence of model quality; run the evaluation with a live provider for that. It deliberately contains one fabricated quote (must be rejected) and one low-confidence, non-stated item.",
+  "output": {
+    "entities": [
+      { "ref": "e1", "type": "PERSON", "name": "Mike Alvarez", "aliases": ["Mike", "mike.a"], "identityKey": "email:mike@example.local", "distinctFrom": [] },
+      { "ref": "e2", "type": "PERSON", "name": "Sarah Kim", "aliases": ["Sarah", "Sarah K.", "S"], "identityKey": "email:sarah@example.local", "distinctFrom": [] },
+      { "ref": "e3", "type": "PERSON", "name": "Danielle Ortiz", "aliases": ["Danielle"], "identityKey": "email:danielle@example.local", "distinctFrom": [] },
+      { "ref": "e4", "type": "PERSON", "name": "Priya Nair", "aliases": ["Priya"], "identityKey": "email:priya@example.local", "distinctFrom": [] },
+      { "ref": "e5", "type": "PERSON", "name": "Tom Becker", "aliases": ["Tom"], "identityKey": "email:tom@example.local", "distinctFrom": [] },
+      { "ref": "e6", "type": "PERSON", "name": "Marcus Reed", "aliases": ["Marcus"], "identityKey": "email:marcus@example.local", "distinctFrom": [] },
+      { "ref": "e7", "type": "ORGANIZATION", "name": "Turner Construction", "aliases": ["Turner", "TBC", "Turner Construction Co.", "the Turner guys"], "identityKey": null, "distinctFrom": ["e8"] },
+      { "ref": "e8", "type": "ORGANIZATION", "name": "Turner Electric", "aliases": [], "identityKey": null, "distinctFrom": ["e7"] },
+      { "ref": "e9", "type": "ACCOUNT", "name": "Highland Park operating account", "aliases": ["HP operating account", "HP operating"], "identityKey": null, "distinctFrom": ["e10"] },
+      { "ref": "e10", "type": "ACCOUNT", "name": "HP reserve account", "aliases": ["Highland Park reserve account"], "identityKey": null, "distinctFrom": ["e9"] },
+      { "ref": "e11", "type": "PROJECT", "name": "Highland Park renovation", "aliases": ["Highland job", "the Highland job"], "identityKey": null, "distinctFrom": [] },
+      { "ref": "e12", "type": "PROJECT", "name": "Eastgate project", "aliases": ["Eastgate"], "identityKey": null, "distinctFrom": [] },
+      { "ref": "e13", "type": "PERSON", "name": "Jordan Lee", "aliases": ["Jordan"], "identityKey": "email:jlee@turner-build.example", "distinctFrom": [] }
+    ],
+    "assertions": [
+      {
+        "kind": "RESPONSIBILITY",
+        "statement": "Mike approved Turner Construction invoices until the Wednesday, August 12 ops sync moved approval to Sarah.",
+        "subjectRef": "e1",
+        "predicate": "approves_invoices_for",
+        "objectRef": "e7",
+        "holderCardinality": "ONE",
+        "operationalStatus": "ENDED",
+        "modality": "STATED",
+        "confidence": 0.9,
+        "effectiveFrom": null,
+        "effectiveTo": "2026-08-12",
+        "timeBasis": "STATED_IN_TEXT",
+        "timeExpression": "per Wednesday's ops sync",
+        "evidence": [
+          { "messageId": "em-0720-a", "quote": "Sending to you for approval as usual.", "role": "SUPPORTS" },
+          { "messageId": "em-0721-b", "quote": "Approved. Pay it from the HP operating account like always.", "role": "SUPPORTS" },
+          { "messageId": "sl-0814-a", "quote": "don't send Turner invoices to Mike anymore", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Tom routed TB-1107 to Mike 'as usual' and Mike approved it. Sarah's Aug 14 message ends Mike's role as of the ops sync on the preceding Wednesday (Aug 12). When Mike started is not stated."
+      },
+      {
+        "kind": "RESPONSIBILITY",
+        "statement": "Sarah approved Turner Construction invoices from the August 12 ops sync until Danielle took over on September 7.",
+        "subjectRef": "e2",
+        "predicate": "approves_invoices_for",
+        "objectRef": "e7",
+        "holderCardinality": "ONE",
+        "operationalStatus": "ENDED",
+        "modality": "STATED",
+        "confidence": 0.88,
+        "effectiveFrom": "2026-08-12",
+        "effectiveTo": "2026-09-07",
+        "timeBasis": "STATED_IN_TEXT",
+        "timeExpression": "per Wednesday's ops sync; as of Monday (the 7th)",
+        "evidence": [
+          { "messageId": "sl-0814-a", "quote": "per Wednesday's ops sync, don't send Turner invoices to Mike anymore. I'm approving them going forward.", "role": "SUPPORTS" },
+          { "messageId": "em-0817-0", "quote": "first one routed to you under the new process", "role": "SUPPORTS" },
+          { "messageId": "sl-0901-b", "quote": "Sarah. Has been since mid-August.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "The decision was made at the ops sync on Wednesday Aug 12 and announced Friday Aug 14, so the operational start precedes the message. Her role ended when Danielle took over as of Sep 7, announced Sep 9."
+      },
+      {
+        "kind": "RESPONSIBILITY",
+        "statement": "Danielle has approved Turner Construction invoices since Monday, September 7.",
+        "subjectRef": "e3",
+        "predicate": "approves_invoices_for",
+        "objectRef": "e7",
+        "holderCardinality": "ONE",
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.93,
+        "effectiveFrom": "2026-09-07",
+        "effectiveTo": null,
+        "timeBasis": "STATED_IN_TEXT",
+        "timeExpression": "As of Monday (the 7th)",
+        "evidence": [
+          { "messageId": "em-0909-a", "quote": "As of Monday (the 7th), Danielle is handling Turner Construction invoice approvals.", "role": "SUPPORTS" },
+          { "messageId": "sl-0910-a", "quote": "I've got Turner now. Send invoices my way", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Announced Wednesday Sep 9, effective the previous Monday. The Sep 11 forward repeats the same email and is not independent confirmation."
+      },
+      {
+        "kind": "RELATIONSHIP",
+        "statement": "Turner Construction invoices are paid from the Highland Park operating account.",
+        "subjectRef": "e7",
+        "predicate": "paid_from",
+        "objectRef": "e9",
+        "holderCardinality": "MANY",
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.86,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": "like always",
+        "evidence": [
+          { "messageId": "em-0721-b", "quote": "Pay it from the HP operating account like always.", "role": "SUPPORTS" },
+          { "messageId": "em-0817-a", "quote": "Use the Highland Park operating account like last month.", "role": "SUPPORTS" },
+          { "messageId": "sl-0910-a", "quote": "keep paying from HP operating unless I say otherwise", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Three approvers across two months give the same instruction. 'HP operating' and 'Highland Park operating account' refer to the same account."
+      },
+      {
+        "kind": "EXCEPTION",
+        "statement": "Turner Electric invoices stayed with Mike; only Turner Construction invoices moved to Sarah.",
+        "subjectRef": "e1",
+        "predicate": null,
+        "objectRef": "e8",
+        "holderCardinality": null,
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.84,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "sl-0814-d", "quote": "Turner Electric stays with Mike. Only Turner Construction comes to me.", "role": "SUPPORTS" },
+          { "messageId": "sl-0814-c", "quote": "does that include the Turner Electric invoices too?", "role": "CONTEXT" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Turner Electric is a different vendor from Turner Construction. Whether Turner Electric approval later moved again is not discussed."
+      },
+      {
+        "kind": "RULE",
+        "statement": "Turner invoices over $25k also need Priya's sign-off in addition to the regular approver.",
+        "subjectRef": "e4",
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.87,
+        "effectiveFrom": "2026-08-19",
+        "effectiveTo": null,
+        "timeBasis": "STATED_IN_TEXT",
+        "timeExpression": "Effective now",
+        "evidence": [
+          { "messageId": "sl-0819-c", "quote": "any Turner invoice over $50k needs my sign-off in addition to Sarah's. Effective now.", "role": "SUPPORTS" },
+          { "messageId": "sl-0819-d", "quote": "Correction - over $25k, not $50k.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Priya corrected the threshold twelve minutes later. The original names Sarah as the regular approver; with Danielle now approving, it is unstated whether the rule refers to the role or to Sarah personally."
+      },
+      {
+        "kind": "DECISION",
+        "statement": "Moving Turner payments to the HP reserve account was floated on August 18 and dropped on August 27; payments stay on the operating account.",
+        "subjectRef": "e4",
+        "predicate": null,
+        "objectRef": "e10",
+        "holderCardinality": null,
+        "operationalStatus": "ABANDONED",
+        "modality": "STATED",
+        "confidence": 0.85,
+        "effectiveFrom": "2026-08-27",
+        "effectiveTo": null,
+        "timeBasis": "COMMUNICATION_TIME",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "sl-0818-a", "quote": "What if we moved Turner payments to the HP reserve account", "role": "CONTEXT" },
+          { "messageId": "sl-0827-a", "quote": "Let's drop the reserve idea", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "The original message is explicitly hypothetical ('Just thinking out loud'). Nine days later in the same thread Priya drops it."
+      },
+      {
+        "kind": "EXCEPTION",
+        "statement": "On August 25 Mike approved Turner invoice TB-1150 after approval had moved to Sarah; Sarah asked him to route Turner invoices to her and he agreed.",
+        "subjectRef": "e1",
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "ENDED",
+        "modality": "STATED",
+        "confidence": 0.82,
+        "effectiveFrom": "2026-08-25",
+        "effectiveTo": null,
+        "timeBasis": "COMMUNICATION_TIME",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "em-0825-a", "quote": "I just approved TB-1150 for Turner", "role": "SUPPORTS" },
+          { "messageId": "sl-0825-a", "quote": "please don't approve Turner anymore, route them to me.", "role": "SUPPORTS" },
+          { "messageId": "sl-0825-b", "quote": "Sorry, old habit. Won't happen again.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "A one-off approval by the previous approver, not a change of responsibility."
+      },
+      {
+        "kind": "RULE",
+        "statement": "Starting October 1, Turner invoices must also be copied to the accounts-payable@ inbox for the new intake process.",
+        "subjectRef": "e7",
+        "predicate": null,
+        "objectRef": null,
+        "holderCardinality": null,
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.9,
+        "effectiveFrom": "2026-10-01",
+        "effectiveTo": null,
+        "timeBasis": "STATED_IN_TEXT",
+        "timeExpression": "Starting October 1",
+        "evidence": [
+          { "messageId": "em-0916-a", "quote": "Starting October 1, please also copy Turner invoices to the accounts-payable@ inbox so they go through the new intake process.", "role": "SUPPORTS" },
+          { "messageId": "sl-0916-a", "quote": "cc the AP inbox on Turner invoices starting Oct 1.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Communicated September 16, effective in the future. The chat message restates Danielle's email."
+      },
+      {
+        "kind": "OPEN_QUESTION",
+        "statement": "Who signs off on the retainage release for the Highland Park general contractor (likely Turner Construction) — Danielle or Priya?",
+        "subjectRef": null,
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "UNRESOLVED",
+        "modality": "QUESTION",
+        "confidence": 0.7,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "sl-0915-a", "quote": "Who signs off on that - Danielle or Priya?", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "No reply in the messages available. 'The Highland GC' most likely means Turner Construction but that is inferred."
+      },
+      {
+        "kind": "RELATIONSHIP",
+        "statement": "Sarah moved to the Eastgate project around September 7.",
+        "subjectRef": "e2",
+        "predicate": "assigned_to",
+        "objectRef": "e12",
+        "holderCardinality": "MANY",
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.75,
+        "effectiveFrom": "2026-09-07",
+        "effectiveTo": null,
+        "timeBasis": "INFERRED_FROM_CONTEXT",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "em-0909-a", "quote": "I've moved over to the Eastgate project.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Stated in the handoff email; the date is inferred from the handoff date."
+      },
+      {
+        "kind": "DECISION",
+        "statement": "Turner's billing contact, Jordan Lee, asked for their remittance address to change to PO Box 4410 before the next payment run, following a call that is not documented here.",
+        "subjectRef": "e13",
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "PROPOSED",
+        "modality": "STATED",
+        "confidence": 0.6,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "em-0821-a", "quote": "please update our remittance address to PO Box 4410 before the next payment run", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "A request, not a completed change. The referenced call is missing context; whether the change was verified or made is unknown."
+      },
+      {
+        "kind": "EXCEPTION",
+        "statement": "Tom routed TB-1163 to Sarah on September 8, after approval had already moved to Danielle; Sarah redirected it.",
+        "subjectRef": "e5",
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "ENDED",
+        "modality": "STATED",
+        "confidence": 0.7,
+        "effectiveFrom": "2026-09-08",
+        "effectiveTo": null,
+        "timeBasis": "COMMUNICATION_TIME",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "em-0908-a", "quote": "TB-1163 from Turner is ready for your approval", "role": "SUPPORTS" },
+          { "messageId": "em-0909-a", "quote": "Please route anything that came in after the 7th to her, including TB-1163.", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "The handoff happened on Sep 7 but was not announced until Sep 9, so routing on Sep 8 still went to Sarah."
+      },
+      {
+        "kind": "EXCEPTION",
+        "statement": "Changes to who approves Turner invoices may not reach everyone who works with Turner.",
+        "subjectRef": "e6",
+        "predicate": null,
+        "objectRef": "e7",
+        "holderCardinality": null,
+        "operationalStatus": "UNRESOLVED",
+        "modality": "UNCERTAIN",
+        "confidence": 0.3,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "sl-0910-b", "quote": "Nobody tells me anything", "role": "SUPPORTS" },
+          { "messageId": "sl-0901-a", "quote": "Still Mike?", "role": "CONTEXT" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Marcus asked on Sep 1 whether Mike still approved and was surprised by the Sep 10 change. His tone is sarcastic, so this is a weak signal, not a finding."
+      },
+      {
+        "kind": "RULE",
+        "statement": "Turner invoices must be approved within five business days.",
+        "subjectRef": "e7",
+        "predicate": null,
+        "objectRef": null,
+        "holderCardinality": null,
+        "operationalStatus": "ACTIVE",
+        "modality": "STATED",
+        "confidence": 0.55,
+        "effectiveFrom": null,
+        "effectiveTo": null,
+        "timeBasis": "UNKNOWN",
+        "timeExpression": null,
+        "evidence": [
+          { "messageId": "em-0908-a", "quote": "must be approved within 5 business days", "role": "SUPPORTS" }
+        ],
+        "supersedesFactIds": [],
+        "rationale": "Deliberately fabricated in this reference file: the quoted words do not exist, so verification must reject it."
+      }
+    ]
+  }
+}

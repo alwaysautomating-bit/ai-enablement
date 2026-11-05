@@ -1,0 +1,25 @@
+id: tool.evidence-retrieval
+type: tool
+title: Evidence Retrieval
+status: implementation-available
+description: Retrieve authorized source evidence with stable provenance identifiers.
+interface:
+  input:
+    type: object
+    required: [evidence_id]
+    properties:
+      evidence_id: {type: string}
+  output:
+    type: object
+    description: Authorized evidence content and stable source metadata, or an explicit not-found result.
+guarantees: [authorized_only, stable_provenance_ids, audited_access]
+implementations:
+  - runtime: ai-enablement-workspace
+    transport: mcp
+    server: ai-enablement-context
+    tool: evidence_retrieval
+    alias_of: get_evidence
+    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts
+    implemented: true
+    tested: partial
+    approved_for_live_sources: false

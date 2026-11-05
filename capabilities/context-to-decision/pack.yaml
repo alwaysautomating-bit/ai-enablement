@@ -1,0 +1,54 @@
+id: skill-pack.context-to-decision
+type: skill-pack
+title: Context-to-Decision
+description: Transform operational evidence into a governed, evidence-grounded action recommendation.
+inputs:
+  - candidate_operational_event
+  - confirmed_operational_event
+  - current_state_question
+  - evidence_bundle
+skills:
+  core:
+    - classify-operational-event-type
+    - reconstruct-current-state
+    - establish-relative-context
+    - expand-connected-context
+    - explain-change
+    - evaluate-business-impact
+    - retrieve-historical-knowledge
+    - recommend-action
+  conditional:
+    - classify-approval-status
+dependencies:
+  skill_packs:
+    - operational-event-reconstruction
+  knowledge:
+    - evidence-grounding
+    - fact-versus-inference
+    - operational-state
+    - recommendation-permission-execution
+  tools:
+    - evidence-retrieval
+    - operational-memory-search
+    - relationship-traversal
+    - policy-retrieval
+outputs:
+  - current_state_packet
+  - relative_context_assessment
+  - connected_context_map
+  - causal_explanation
+  - business_impact_assessment
+  - historical_precedent_packet
+  - approval_status_assessment
+  - action_recommendation
+guardrails:
+  - preserve_provenance
+  - preserve_uncertainty
+  - do_not_use_latest_wins
+  - do_not_treat_precedent_as_prescription
+  - do_not_infer_approval
+  - recommendation_is_not_permission
+  - recommendation_is_not_execution
+evaluations:
+  atomic: evaluations/context-to-decision/atomic
+  end_to_end: evaluations/context-to-decision/end-to-end

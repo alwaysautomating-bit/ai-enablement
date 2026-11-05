@@ -1,0 +1,34 @@
+name: three-clocks-partial-event-ordering
+skill: reconstruct-partial-event-order
+scenarios:
+  - id: late-testimony-about-earlier-event
+    input:
+      facts:
+        - "Claim C1 appears at transcript Day 3, page 42, line 8."
+        - "C1 says event E1 happened about two hours before dispatch D1."
+        - "Dispatch D1 is timestamped 2026-08-01T22:00:00Z."
+        - "C1 entered the corpus after the dispatch record."
+    must:
+      - "Keep transcript order, alleged occurrence time, and corpus entry order separate."
+      - "Represent E1 as relative or approximate unless stronger evidence exists."
+      - "Place E1 before D1 only on the basis of the sourced assertion."
+      - "Avoid claiming the transcript or corpus order is the occurrence order."
+  - id: incomparable-events
+    input:
+      facts:
+        - "Event A is documented as before noon."
+        - "Event B is documented as after intake, whose time is unknown."
+        - "No source connects A, B, noon, and intake."
+    must:
+      - "Report A and B as incomparable."
+      - "Avoid inventing a total order or timestamps."
+  - id: contradictory-order
+    input:
+      facts:
+        - "Source S1 asserts A before B."
+        - "Source S2 asserts B before A."
+    must:
+      - "Preserve both assertions and their provenance."
+      - "Report a contradiction or cycle."
+      - "Do not silently select one chronology."
+

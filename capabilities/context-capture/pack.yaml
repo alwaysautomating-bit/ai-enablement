@@ -1,0 +1,62 @@
+id: skill-pack.context-capture
+type: skill-pack
+title: Context Capture
+description: Reconstruct reviewable operational context from bounded, authorized work conversations and stabilize meaning before durable storage.
+inputs:
+  - bounded_question
+  - authorized_source_scope
+  - permission_filtered_known_context
+skills:
+  core:
+    - extract-candidate-operational-context
+  conditional:
+    - frame-bounded-capture
+    - answer-from-reviewed-context
+dependencies:
+  skill_packs:
+    - slack-operational-sensing
+    - operational-memory
+  knowledge:
+    - evidence-grounding
+    - fact-versus-inference
+    - operational-state
+    - semantic-stabilization-boundary
+    - permission-classes
+    - recommendation-permission-execution
+  tools:
+    - evidence-retrieval
+    - semantic-stabilization
+    - bounded-context-capture
+    - operational-memory-search
+    - relationship-traversal
+outputs:
+  - candidate_operational_context
+  - stabilization_report
+  - provenance_pointers
+  - review_queue
+guardrails:
+  - communication_is_not_confirmation
+  - preserve_provenance
+  - separate_communication_and_operational_time
+  - stabilization_is_not_truth
+  - recommendation_is_not_permission
+  - respect_authorized_scope
+evaluations:
+  end_to_end: evaluations/context-capture/end-to-end
+governance:
+  human_review: required
+  execution_authority: none
+  permission_classes:
+    requested:
+      - retrieve_authorized_evidence
+      - reconstruct_conversations
+      - extract_candidate_assertions
+      - run_semantic_stabilization
+      - persist_candidates
+    human_only:
+      - confirm_operational_facts
+      - broaden_visibility
+    not_requested:
+      - send_email
+      - post_chat_message
+      - execute_downstream_action

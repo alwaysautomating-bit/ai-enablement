@@ -1,0 +1,13 @@
+id: evaluation.change-quality.high-confidence-change-review
+type: evaluation
+title: High-Confidence Change Review End-to-End
+fixture: references/examples/change-quality/cases.md
+capability: high-confidence-change-review
+expected: [validated_findings, suppressed_candidates, publication_decision]
+guardrails: [suppress_speculative_findings, reject_pre_existing_issues, block_stale_publication, publication_requires_authority]
+semantic_review:
+  rubric: evaluations/rubrics/evidence-grounded-decision.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria: [evidence_grounding, guardrail_compliance, decision_safety]

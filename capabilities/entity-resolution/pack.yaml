@@ -1,0 +1,44 @@
+id: capability.entity-resolution
+type: capability
+title: Entity Resolution
+description: Produce governed, explainable, reversible identity-resolution proposals using versioned evidence and executable signal contracts.
+inputs:
+  - identity_candidates
+  - evidence_bundle
+  - known_identity_constraints
+  - authorized_resolution_precedents
+skills:
+  core:
+    - entity-resolution
+  conditional:
+    - reconstruct-current-state
+    - retrieve-historical-knowledge
+dependencies:
+  skill_packs: []
+  knowledge:
+    - entity-resolution-signal-integrity
+    - evidence-grounding
+    - fact-versus-inference
+    - recommendation-permission-execution
+  tools:
+    - evidence-retrieval
+    - relationship-traversal
+    - resolution-precedent-search
+    - signal-contract-verification
+outputs:
+  - resolution_proposal
+  - adjudication_packet
+  - signal_conformance_report
+  - precedent_candidate
+guardrails:
+  - preserve_source_records
+  - preserve_provenance
+  - preserve_uncertainty
+  - declare_order_semantics
+  - block_on_signal_contract_failure
+  - check_cluster_consistency
+  - confidence_does_not_grant_authority
+  - consequential_merge_requires_review
+evaluations:
+  rubric: evaluations/entity-resolution/rubric.md
+  fixtures: evaluations/entity-resolution/fixtures

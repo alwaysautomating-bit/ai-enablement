@@ -1,0 +1,28 @@
+id: evaluation.operational-memory.foundation
+type: evaluation
+title: Operational Memory Foundation
+capability: operational-memory
+fixture: evaluations/operational-memory/fixtures/test-packet.md
+expected:
+  - identity_findings
+  - evidence_weighting_notes
+  - fact_inference_separation
+  - uncertainty_aware_explanation
+  - reconstructed_timeline
+  - missing_evidence
+  - next_safe_workflow_step
+guardrails:
+  - do_not_merge_without_support
+  - preserve_provenance
+  - do_not_invent_causality
+  - recommendation_is_not_execution
+semantic_review:
+  rubric: evaluations/rubrics/operational-memory.yaml
+  approval:
+    mode: human_required
+    pass_threshold: 1.0
+    blocking_criteria:
+      - identity_resolution
+      - evidence_weighting
+      - uncertainty_handling
+      - workflow_choice

@@ -1,0 +1,31 @@
+id: skill-pack.operational-event-reconstruction
+type: skill-pack
+title: Operational Event Reconstruction
+description: Detect, classify, and prepare reviewable operational-event candidates without converting communication directly into truth.
+inputs:
+  - communication_records
+  - evidence_bundle
+skills:
+  core:
+    - detect-operational-event
+    - classify-operational-event-type
+dependencies:
+  skill_packs: []
+  knowledge:
+    - operational-state
+    - fact-versus-inference
+    - evidence-grounding
+  references:
+    - operational-event-schema
+  tools:
+    - evidence-retrieval
+outputs:
+  - candidate_operational_event
+guardrails:
+  - preserve_provenance
+  - preserve_uncertainty
+  - do_not_infer_approval
+  - human_review_before_confirmation
+evaluations:
+  atomic: evaluations/operational-event-reconstruction/atomic
+  end_to_end: evaluations/operational-event-reconstruction/end-to-end

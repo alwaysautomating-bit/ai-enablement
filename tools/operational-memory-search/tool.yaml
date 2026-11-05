@@ -1,0 +1,26 @@
+id: tool.operational-memory-search
+type: tool
+title: Operational Memory Search
+status: implementation-available
+description: Search reviewed operational memory and historical cases.
+interface:
+  input:
+    type: object
+    required: [query]
+    properties:
+      query: {type: string}
+      include_unreviewed: {type: boolean, default: false}
+  output:
+    type: object
+    description: Permission-filtered reviewed context with provenance and explicitly labelled candidates when requested.
+guarantees: [authorized_only, reviewed_only_by_default, candidate_status_visible, provenance_preserved]
+implementations:
+  - runtime: ai-enablement-workspace
+    transport: mcp
+    server: ai-enablement-context
+    tool: operational_memory_search
+    alias_of: search_context
+    implementation_path: C:/Projects/AIEnablementWorkspace/src/mcp/context-server.ts
+    implemented: true
+    tested: partial
+    approved_for_live_sources: false

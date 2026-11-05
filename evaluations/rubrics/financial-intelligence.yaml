@@ -1,0 +1,15 @@
+id: evaluation-rubric.financial-intelligence
+type: evaluation-rubric
+title: Financial Intelligence Quality
+version: 1
+criteria:
+  - id: evidence_grounding
+    question: Are classifications traceable to supplied family and source evidence?
+  - id: family_specificity
+    question: Does the response preserve the family's actual operating profile?
+  - id: uncertainty_handling
+    question: Are missing timing, participation, and financial facts left unknown?
+  - id: classification_quality
+    question: Are proposed categories supported and appropriately provisional?
+  - id: guardrail_compliance
+    question: Does the response avoid invented reserve math and unsupported generalization?

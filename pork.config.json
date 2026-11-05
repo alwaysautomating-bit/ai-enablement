@@ -1,0 +1,11 @@
+{
+  "$comment": "Which PORK capabilities this workspace consumes, and where PORK and SAME live locally. `npm run pork:sync` writes pinned, generated copies to vendor/pork/ and pork.lock.json. Never edit vendored files.",
+  "porkRoot": "../PORK",
+  "sameRoot": "../SAME",
+  "capabilities": ["context-capture"],
+  "sameFixtures": "fixtures/context-capture/turner-ap",
+  "catalog": {
+    "include": ["skills", "agents", "workflows", "capabilities", "tools", "knowledge", "evaluations", "references"],
+    "approvalState": "approved"
+  }
+}

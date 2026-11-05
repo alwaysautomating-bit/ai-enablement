@@ -1,0 +1,5 @@
+id: tool.change-state-retrieval
+type: tool
+title: Change State Retrieval
+status: interface-required
+description: Retrieve current local or hosted change eligibility, revision identity, and prior review state.

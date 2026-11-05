@@ -1,0 +1,31 @@
+id: capability.same-research
+type: capability
+title: SAME Research
+description: Run governed offline identity-resolution research without silently changing production identity state.
+inputs:
+  - identity_candidates
+  - evidence_bundle
+skills:
+  core:
+    - entity-resolution
+    - reconstruct-current-state
+dependencies:
+  skill_packs:
+    - entity-resolution
+  knowledge:
+    - entity-resolution-signal-integrity
+    - evidence-grounding
+    - fact-versus-inference
+  tools:
+    - evidence-retrieval
+    - relationship-traversal
+    - signal-contract-verification
+outputs:
+  - identity_research_packet
+  - merge_recommendation
+guardrails:
+  - preserve_provenance
+  - preserve_uncertainty
+  - block_training_on_signal_contract_failure
+  - enforce_declared_order_semantics
+  - human_review_before_merge
